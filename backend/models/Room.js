@@ -12,9 +12,10 @@ const NoteSchema = new mongoose.Schema({
 
 // הגדרת המבנה של חדר
 const RoomSchema = new mongoose.Schema({
-  roomId: { type: String, required: true, unique: true }, // קוד החדר (למשל "1234")
-  participants: [{ type: String }], // רשימת שמות משתמשים מחוברים
-  notes: [NoteSchema], // החדר מכיל מערך של פתקים
+  roomId: { type: String, required: true, unique: true },
+  appId: { type: mongoose.Schema.Types.ObjectId, ref: "App", required: true },
+
+  notes: [NoteSchema],
   createdAt: { type: Date, default: Date.now },
 });
 
