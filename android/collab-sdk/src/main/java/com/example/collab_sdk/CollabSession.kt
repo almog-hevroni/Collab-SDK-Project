@@ -15,8 +15,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URISyntaxException
 
 object CollabSession {
-
-    // ⚠️ ודאי שזו כתובת ה-IP העדכנית של המחשב שלך
     private const val BASE_URL = "http://192.168.1.28:3000/"
     private const val TAG = "CollabSDK"
 
@@ -24,17 +22,13 @@ object CollabSession {
     private var apiKey: String? = null
     private var mSocket: Socket? = null
 
-    // Gson משמש אותנו להמיר מידע גולמי ל-Map ולהפך
     private val gson = Gson()
 
-    // --- ממשק האזנה גנרי (Generic Listener) ---
-    // המפתח יממש את הפונקציה הזו ויקבל Map עם כל המידע
+    // --- (Generic Listener) ---
     interface CollabListener {
         fun onEventReceived(data: Map<String, Any>)
     }
     private var listener: CollabListener? = null
-
-    // --- אתחול והגדרות ---
 
     fun initialize(apiKey: String) {
         this.apiKey = apiKey
@@ -43,7 +37,6 @@ object CollabSession {
         Log.d(TAG, "SDK Initialized. Ready to connect.")
     }
 
-    // פונקציה לרישום המאזין (האפליקציה קוראת לזה)
     fun setListener(collabListener: CollabListener) {
         this.listener = collabListener
     }
@@ -58,39 +51,30 @@ object CollabSession {
 
     private fun setupSocket() {
         try {
-            // יצירת אובייקט ה-Socket (עדיין לא מתחבר)
             mSocket = IO.socket(BASE_URL)
         } catch (e: URISyntaxException) {
             Log.e(TAG, "Socket URI Error: ${e.message}")
         }
     }
 
-    // --- לוגיקת Socket (זמן אמת) ---
-
     fun joinRoom(roomId: String) {
-        // התחברות לשרת אם עדיין לא מחוברים
         if (mSocket?.connected() == false) {
             mSocket?.connect()
         }
-
-        // ברגע שיש חיבור -> מצטרפים לחדר
         mSocket?.on(Socket.EVENT_CONNECT) {
             Log.d(TAG, "Socket Connected! Joining room: $roomId")
             mSocket?.emit("join_room", roomId)
         }
 
-        // האזנה לאירועים גנריים מהשרת ("collab_event")
         mSocket?.on("collab_event") { args ->
             if (args.isNotEmpty()) {
                 val data = args[0]
                 Log.d(TAG, "Received raw event: $data")
 
                 try {
-                    // המרה חכמה מ-JSON ל-Map גנרי של Kotlin
                     val type = object : TypeToken<Map<String, Any>>() {}.type
                     val mapData: Map<String, Any> = gson.fromJson(data.toString(), type)
 
-                    // העברת המידע הנקי לאפליקציה
                     listener?.onEventReceived(mapData)
                 } catch (e: Exception) {
                     Log.e(TAG, "Error parsing event data: ${e.message}")
@@ -99,7 +83,7 @@ object CollabSession {
         }
     }
 
-    // פונקציה לשליחת אירוע (מכל סוג שהוא)
+    // Sending Events
     fun sendEvent(roomId: String, eventData: Map<String, Any>) {
         if (mSocket?.connected() == false) {
             Log.e(TAG, "Cannot send event - Socket not connected")
@@ -110,11 +94,9 @@ object CollabSession {
         try {
             updateData.put("roomId", roomId)
 
-            // המרת ה-Map של המשתמש ל-JSON
             val payloadJson = JSONObject(gson.toJson(eventData))
             updateData.put("payload", payloadJson)
 
-            // שליחה לשרת תחת השם הגנרי
             mSocket?.emit("collab_event", updateData)
             Log.d(TAG, "Event sent: $eventData")
 
@@ -126,8 +108,6 @@ object CollabSession {
     fun isSocketConnected(): Boolean {
         return mSocket?.connected() == true
     }
-
-    // --- לוגיקת HTTP (REST API) ---
 
     suspend fun registerApp(appName: String, email: String): AppRegisterResponse? {
         if (apiService == null) setupRetrofit()

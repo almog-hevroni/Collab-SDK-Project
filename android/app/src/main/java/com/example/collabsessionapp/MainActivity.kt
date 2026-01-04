@@ -38,12 +38,10 @@ class MainActivity : AppCompatActivity(), CollabSession.CollabListener {
         val btnCreate = findViewById<Button>(R.id.btnCreate)
         val btnJoin = findViewById<Button>(R.id.btnJoin)
 
-        // 1. יצירת חדר חדש
         btnCreate.setOnClickListener {
             startSession(isNewRoom = true)
         }
 
-        // 2. הצטרפות לחדר קיים
         btnJoin.setOnClickListener {
             val roomIdInput = etRoomId.text.toString().trim()
             if (roomIdInput.isNotEmpty()) {
@@ -64,14 +62,12 @@ class MainActivity : AppCompatActivity(), CollabSession.CollabListener {
         tvStatus.text = "Connecting..."
 
         lifecycleScope.launch {
-            // א. הרשמה (במציאות עושים את זה פעם אחת ושומרים את המפתח)
             val reg = CollabSession.registerApp("Whiteboard App", "user@demo.com")
 
             if (reg != null && reg.success) {
                 CollabSession.initialize(reg.apiKey)
 
                 if (isNewRoom) {
-                    // יצירת חדר חדש
                     val room = CollabSession.createRoom()
                     if (room != null) {
                         joinTheRoom(room.roomId)
@@ -79,8 +75,6 @@ class MainActivity : AppCompatActivity(), CollabSession.CollabListener {
                         updateStatus("Error creating room")
                     }
                 } else {
-                    // הצטרפות לחדר קיים (שהמשתמש הקליד)
-                    // אין צורך ב-createRoom, פשוט נכנסים לסוקט
                     joinTheRoom(roomIdInput!!)
                 }
             } else {
@@ -100,18 +94,10 @@ class MainActivity : AppCompatActivity(), CollabSession.CollabListener {
         }
     }
 
-    // --- (כל שאר הקוד נשאר זהה לחלוטין: createNewNote, onEventReceived, addNoteViewToBoard...) ---
-
-    // להעתיק מכאן את שאר הפונקציות מהקובץ הקודם:
-    // createNewNote(), onEventReceived(), addNoteViewToBoard(), updateStatus(), generateRandomColor()
-    // (אם תרצי שאשלח שוב את הכל במלא תגידי לי)
-
-    // --- הדבקה של הפונקציות החסרות לנוחותך: ---
-
     private fun createNewNote() {
         val noteId = UUID.randomUUID().toString()
         val startX = 100f
-        val startY = 300f // קצת יותר למטה שלא יסתיר
+        val startY = 300f
         val color = generateRandomColor()
 
         addNoteViewToBoard(noteId, startX, startY, color)
