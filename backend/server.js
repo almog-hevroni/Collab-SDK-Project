@@ -1,30 +1,34 @@
 require("dotenv").config();
 const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
+const http = require("http"); //Imports Node.js's built-in HTTP module.
+const { Server } = require("socket.io"); //Destructures the Server class from the socket.io library to enable real-time, bi-directional communication.
 const mongoose = require("mongoose");
 const cors = require("cors");
 
-// ייבוא הנתיבים (Routes)
+//Custom Module Imports
 const roomRoutes = require("./routes/roomRoutes");
 const appRoutes = require("./routes/appRoutes");
 const socketHandler = require("./sockets/socketHandler");
 
-const app = express();
-app.use(cors());
+//App Initialization & Middleware
+const app = express(); //Creates the main Express application instance
+app.use(cors()); //Enables CORS for all incoming requests, allowing any client to fetch data from the server
 app.use(express.json());
 
-// --- חיבור ל-MongoDB ---
+//Database Connection
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Connected to MongoDB Atlas!"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// --- הגדרת Routes (שכבת הניתוב) ---
+// API Routes
 app.use("/api/rooms", roomRoutes);
 app.use("/api/apps", appRoutes);
 
+//Server Creation
 const server = http.createServer(app);
+
+// Socket.io Configuration
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -32,10 +36,10 @@ const io = new Server(server, {
   },
 });
 
-// --- הפעלת לוגיקת ה-Socket (הפנייה לקובץ החיצוני) ---
-socketHandler(io); // <--- הנה הקסם. שורה אחת נקייה.
+// Socket Logic
+socketHandler(io); //This is where the main real-time events (join_room, send_message) are likely defined.
 
-// מסלול בדיקה כללי
+// Basic Routes & Events
 app.get("/", (req, res) => {
   res.send("Server is running with Layered Architecture! 🚀");
 });
@@ -47,6 +51,7 @@ io.on("connection", (socket) => {
   });
 });
 
+//Server Listening
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`SERVER RUNNING ON PORT ${PORT}`);
