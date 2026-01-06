@@ -1,81 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="#FAFAFA"
     tools:context=".MainActivity">
 
+    <!-- SCREEN 1: START / LOBBY -->
     <LinearLayout
+        android:id="@+id/layoutStartScreen"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#F5F5F5"
-        android:elevation="4dp"
+        android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="32dp"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tic Tac Toe\nMultiplayer"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="#333333"
+            android:layout_marginBottom="48dp"/>
 
         <Button
             android:id="@+id/btnCreate"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#212121"
-            android:text="Create New Room" />
+            android:layout_height="60dp"
+            android:text="Create New Game"
+            android:textSize="18sp"
+            android:backgroundTint="#212121"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="- OR -"
+            android:layout_margin="16dp"
+            android:textColor="#888888"/>
+
+        <EditText
+            android:id="@+id/etRoomId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Room ID"
+            android:background="@android:drawable/editbox_background"
+            android:padding="16dp"
+            android:textSize="16sp"/>
+
+        <Button
+            android:id="@+id/btnJoin"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Join Game"
+            android:textSize="18sp"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="#4CAF50"/>
+    </LinearLayout>
+
+    <!-- SCREEN 2: GAME BOARD -->
+    <LinearLayout
+        android:id="@+id/layoutGame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="#FFFFFF">
+
+        <!-- Top Bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:background="#333333"
+            android:padding="16dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/etRoomId"
+            <TextView
+                android:id="@+id/tvStatus"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@android:drawable/editbox_background"
-                android:hint="Enter Room ID to Join"
-                android:padding="12dp"
-                android:textSize="14sp" />
+                android:text="Waiting..."
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
 
             <Button
-                android:id="@+id/btnJoin"
+                android:id="@+id/btnExit"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:backgroundTint="#4CAF50"
-                android:text="Join" />
+                android:layout_height="40dp"
+                android:text="Exit"
+                android:textSize="12sp"
+                android:backgroundTint="#D32F2F"/>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnAddNote"
+        <!-- Room Info -->
+        <TextView
+            android:id="@+id/tvRoomCode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="#6200EE"
-            android:enabled="false"
-            android:text="+ Add New Note"
-            android:textColor="#FFFFFF" />
+            android:text="Room: -----"
+            android:gravity="center"
+            android:padding="12dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#555555"/>
+
+        <!-- The Grid -->
+        <GridLayout
+            android:id="@+id/ticTacToeGrid"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:rowCount="3"
+            android:columnCount="3"
+            android:padding="16dp"
+            android:alignmentMode="alignMargins"
+            android:layout_gravity="center">
+        </GridLayout>
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#333333"
-        android:padding="8dp"
-        android:text="Status: Ready to connect"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="12sp" />
-
-    <FrameLayout
-        android:id="@+id/boardContainer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#FFFFFF">
-
-    </FrameLayout>
-
-</LinearLayout>
+</FrameLayout>

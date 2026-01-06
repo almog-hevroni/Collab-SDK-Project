@@ -1,191 +1,147 @@
 package com.example.collabsessionapp
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.FrameLayout
+import android.widget.GridLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.collab_sdk.CollabSession
 import kotlinx.coroutines.launch
-import java.util.UUID
 
-class MainActivity : AppCompatActivity(), CollabSession.CollabListener {
+class MainActivity : AppCompatActivity() {
 
+    // Use 'by viewModels()' for automatic lifecycle handling
+    private val viewModel: GameViewModel by viewModels()
+
+    // --- UI Variables ---
+    private lateinit var layoutStartScreen: LinearLayout
+    private lateinit var layoutGame: LinearLayout
     private lateinit var tvStatus: TextView
-    private lateinit var boardContainer: FrameLayout
-    private lateinit var btnAddNote: Button
+    private lateinit var tvRoomCode: TextView
+    private lateinit var gridLayout: GridLayout
     private lateinit var etRoomId: EditText
-
-    private val activeNotes = mutableMapOf<String, View>()
-    private var currentRoomId: String? = null
+    private val buttons = arrayOfNulls<Button>(9)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initializeViews()
+        setupListeners()
+        setupObservers()
+    }
+
+    private fun initializeViews() {
+        layoutStartScreen = findViewById(R.id.layoutStartScreen)
+        layoutGame = findViewById(R.id.layoutGame)
         tvStatus = findViewById(R.id.tvStatus)
-        boardContainer = findViewById(R.id.boardContainer)
-        btnAddNote = findViewById(R.id.btnAddNote)
+        tvRoomCode = findViewById(R.id.tvRoomCode)
         etRoomId = findViewById(R.id.etRoomId)
+        gridLayout = findViewById(R.id.ticTacToeGrid)
 
-        val btnCreate = findViewById<Button>(R.id.btnCreate)
-        val btnJoin = findViewById<Button>(R.id.btnJoin)
+        setupGrid()
+    }
 
-        btnCreate.setOnClickListener {
-            startSession(isNewRoom = true)
+    private fun setupGrid() {
+        gridLayout.removeAllViews()
+        for (i in 0 until 9) {
+            val btn = Button(this)
+            btn.text = ""
+            btn.textSize = 32f
+            btn.setBackgroundColor(Color.LTGRAY)
+
+            val params = GridLayout.LayoutParams()
+            params.width = 0
+            params.height = 0
+            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+            params.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+            params.setMargins(8, 8, 8, 8)
+            btn.layoutParams = params
+
+            btn.setOnClickListener { viewModel.onCellClicked(i) }
+
+            gridLayout.addView(btn)
+            buttons[i] = btn
+        }
+    }
+
+    private fun setupListeners() {
+        findViewById<Button>(R.id.btnCreate).setOnClickListener {
+            viewModel.createSession()
         }
 
-        btnJoin.setOnClickListener {
-            val roomIdInput = etRoomId.text.toString().trim()
-            if (roomIdInput.isNotEmpty()) {
-                startSession(isNewRoom = false, roomIdInput = roomIdInput)
-            } else {
-                Toast.makeText(this, "Please enter Room ID", Toast.LENGTH_SHORT).show()
+        findViewById<Button>(R.id.btnJoin).setOnClickListener {
+            val input = etRoomId.text.toString().trim()
+            viewModel.joinSession(input)
+        }
+
+        findViewById<Button>(R.id.btnExit).setOnClickListener {
+            viewModel.exitGame()
+        }
+    }
+
+    private fun setupObservers() {
+        // 1. Board Updates
+        viewModel.boardState.observe(this) { board ->
+            for (i in 0 until 9) {
+                buttons[i]?.text = board[i]
+                if (board[i] == "X") buttons[i]?.setTextColor(Color.RED)
+                else if (board[i] == "O") buttons[i]?.setTextColor(Color.BLUE)
             }
         }
 
-        btnAddNote.setOnClickListener {
-            createNewNote()
+        // 2. Game Status Text
+        viewModel.statusText.observe(this) { status ->
+            tvStatus.text = status
         }
 
-        CollabSession.setListener(this)
-    }
+        // 3. Room Code Display
+        viewModel.roomCode.observe(this) { code ->
+            tvRoomCode.text = code
+        }
 
-    private fun startSession(isNewRoom: Boolean, roomIdInput: String? = null) {
-        tvStatus.text = "Connecting..."
+        // 4. Winning Line Highlighting
+        viewModel.winningLine.observe(this) { indices ->
+            if (indices != null) {
+                for (index in indices) {
+                    buttons[index]?.setBackgroundColor(Color.GREEN)
+                }
+            } else {
+                // Reset colors if null (new game)
+                for (btn in buttons) {
+                    btn?.setBackgroundColor(Color.LTGRAY)
+                }
+            }
+        }
 
+        // 5. Screen Navigation (Lobby vs Game)
+        viewModel.gameState.observe(this) { state ->
+            if (state == GameViewModel.GameState.GAME) {
+                layoutStartScreen.visibility = View.GONE
+                layoutGame.visibility = View.VISIBLE
+                etRoomId.setText("") // Clear input
+            } else {
+                layoutStartScreen.visibility = View.VISIBLE
+                layoutGame.visibility = View.GONE
+                // Reset board UI immediately for good UX
+                for (btn in buttons) {
+                    btn?.text = ""
+                    btn?.setBackgroundColor(Color.LTGRAY)
+                }
+            }
+        }
+
+        // 6. One-time Toast Messages
         lifecycleScope.launch {
-            val reg = CollabSession.registerApp("Whiteboard App", "user@demo.com")
-
-            if (reg != null && reg.success) {
-                CollabSession.initialize(reg.apiKey)
-
-                if (isNewRoom) {
-                    val room = CollabSession.createRoom()
-                    if (room != null) {
-                        joinTheRoom(room.roomId)
-                    } else {
-                        updateStatus("Error creating room")
-                    }
-                } else {
-                    joinTheRoom(roomIdInput!!)
-                }
-            } else {
-                updateStatus("Error registering app")
+            viewModel.toastEvent.collect { message ->
+                Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun joinTheRoom(roomId: String) {
-        currentRoomId = roomId
-        CollabSession.joinRoom(roomId)
-
-        updateStatus("Connected! Room ID: $roomId")
-        runOnUiThread {
-            etRoomId.setText(roomId) // מציג את ה-ID כדי שיהיה קל להעתיק
-            btnAddNote.isEnabled = true
-        }
-    }
-
-    private fun createNewNote() {
-        val noteId = UUID.randomUUID().toString()
-        val startX = 100f
-        val startY = 300f
-        val color = generateRandomColor()
-
-        addNoteViewToBoard(noteId, startX, startY, color)
-
-        val eventData = mapOf(
-            "type" to "NOTE_CREATED",
-            "id" to noteId,
-            "x" to startX,
-            "y" to startY,
-            "color" to color
-        )
-
-        currentRoomId?.let { roomId ->
-            CollabSession.sendEvent(roomId, eventData)
-        }
-    }
-
-    override fun onEventReceived(data: Map<String, Any>) {
-        runOnUiThread {
-            try {
-                val type = data["type"] as? String ?: return@runOnUiThread
-                val id = data["id"] as? String ?: return@runOnUiThread
-
-                when (type) {
-                    "NOTE_CREATED" -> {
-                        if (!activeNotes.containsKey(id)) {
-                            val x = (data["x"] as Number).toFloat()
-                            val y = (data["y"] as Number).toFloat()
-                            val color = (data["color"] as? Number)?.toInt() ?: Color.GRAY
-                            addNoteViewToBoard(id, x, y, color)
-                        }
-                    }
-                    "NOTE_MOVED" -> {
-                        val x = (data["x"] as Number).toFloat()
-                        val y = (data["y"] as Number).toFloat()
-                        val noteView = activeNotes[id]
-                        noteView?.animate()?.x(x)?.y(y)?.setDuration(0)?.start() // אנימציה חלקה יותר
-                    }
-                }
-            } catch (e: Exception) {
-                updateStatus("Error: ${e.message}")
-            }
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun addNoteViewToBoard(id: String, x: Float, y: Float, color: Int) {
-        val noteView = TextView(this)
-        noteView.text = "Note"
-        noteView.setBackgroundColor(color)
-        noteView.gravity = android.view.Gravity.CENTER
-        noteView.setTextColor(Color.WHITE)
-
-        val params = FrameLayout.LayoutParams(200, 200)
-        noteView.layoutParams = params
-        noteView.x = x
-        noteView.y = y
-
-        boardContainer.addView(noteView)
-        activeNotes[id] = noteView
-
-        noteView.setOnTouchListener { view, event ->
-            when (event.action) {
-                MotionEvent.ACTION_MOVE -> {
-                    view.x = event.rawX - view.width / 2
-                    view.y = event.rawY - view.height * 2
-
-                    currentRoomId?.let { roomId ->
-                        val moveData = mapOf(
-                            "type" to "NOTE_MOVED",
-                            "id" to id,
-                            "x" to view.x,
-                            "y" to view.y
-                        )
-                        CollabSession.sendEvent(roomId, moveData)
-                    }
-                }
-            }
-            true
-        }
-    }
-
-    private fun updateStatus(text: String) {
-        runOnUiThread { tvStatus.text = text }
-    }
-
-    private fun generateRandomColor(): Int {
-        val rnd = java.util.Random()
-        return Color.rgb(rnd.nextInt(200), rnd.nextInt(200), rnd.nextInt(200))
     }
 }
