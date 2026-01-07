@@ -8,25 +8,18 @@ import kotlinx.coroutines.withContext
 
 class GameRepository(private val context: Context) {
 
-    private val prefs: SharedPreferences = context.getSharedPreferences("CollabPrefs", Context.MODE_PRIVATE)
+    // Removed SharedPreferences usage as API Key is now hardcoded/constants
+    // private val prefs: SharedPreferences = context.getSharedPreferences("CollabPrefs", Context.MODE_PRIVATE)
 
     // Ensure SDK is initialized with a valid API Key
     suspend fun initializeSdk(): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
-                var storedApiKey = prefs.getString("api_key", null)
+                // Hardcoded API Key from Developer Portal
+                // In a real production app, this should be in BuildConfig or secure storage
+                val apiKey = "093912e3-312c-4c18-8949-7a3878ec4f19"
 
-                if (storedApiKey == null) {
-                    val reg = CollabSession.registerApp("TicTacToe", "game@demo.com")
-                    if (reg != null && reg.success) {
-                        storedApiKey = reg.apiKey
-                        prefs.edit().putString("api_key", storedApiKey).apply()
-                    } else {
-                        return@withContext Result.failure(Exception("Registration failed"))
-                    }
-                }
-
-                CollabSession.initialize(storedApiKey!!)
+                CollabSession.initialize(apiKey)
                 Result.success(Unit)
             } catch (e: Exception) {
                 Result.failure(e)

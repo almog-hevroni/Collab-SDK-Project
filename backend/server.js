@@ -8,6 +8,7 @@ const cors = require("cors");
 //Custom Module Imports
 const roomRoutes = require("./routes/roomRoutes");
 const appRoutes = require("./routes/appRoutes");
+const authRoutes = require("./routes/authRoutes");
 const socketHandler = require("./sockets/socketHandler");
 
 //App Initialization & Middleware
@@ -22,6 +23,7 @@ mongoose
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
 // API Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/apps", appRoutes);
 
