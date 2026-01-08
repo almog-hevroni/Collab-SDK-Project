@@ -18,6 +18,11 @@ CollabSession SDK provides a complete solution for adding real-time features to 
 
 ## 📂 Project Structure
 
+## 🏗️ System Architecture
+
+![System Architecture](docs/screenshots/System_Architecture_Diagram_collabSessionSdk.png)
+_Above: High-level overview of how the SDK, Backend, and Portal interact._
+
 The project is divided into three main components. Below is the detailed structure of each.
 
 ### 1. Backend Service (`backend/`)
