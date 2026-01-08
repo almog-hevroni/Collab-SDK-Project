@@ -1,26 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import {
-  Copy,
-  Trash2,
-  ArrowLeft,
-  RefreshCw,
-  Box,
-  Key,
-  ExternalLink,
-  Activity,
-} from "lucide-react";
+import { Copy, ArrowLeft, RefreshCw, Key } from "lucide-react";
 import { toast } from "react-toastify";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import AnalyticsChart from "../components/AnalyticsChart";
+import IntegrationGuide from "../components/IntegrationGuide";
+import RoomList from "../components/RoomList";
 
 export default function AppDetails() {
   const { id } = useParams();
@@ -38,7 +23,7 @@ export default function AppDetails() {
   const loadData = async () => {
     try {
       setLoading(true);
-      // Fetch App Details (Workaround: get all and find)
+      // Fetch App Details
       const appRes = await api.get("/apps/my-apps");
       const currentApp = appRes.data.data.find((a) => a._id === id);
       setApp(currentApp);
@@ -91,7 +76,7 @@ export default function AppDetails() {
     toast.success("Copied to clipboard!");
   };
 
-  const deleteRoom = async (roomId) => {
+  const handleDeleteRoom = async (roomId) => {
     if (
       !window.confirm(
         "Are you sure you want to close this room? Players will be disconnected."
@@ -170,142 +155,11 @@ export default function AppDetails() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        {/* Analytics Chart */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border">
-          <h3 className="font-bold text-secondary mb-6 flex items-center gap-2">
-            <Activity size={20} className="text-primary" /> Room Activity (Last
-            7 Days)
-          </h3>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#E2E8F0"
-                />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "#64748B", fontSize: 12 }}
-                  dy={10}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "#64748B", fontSize: 12 }}
-                  allowDecimals={false}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1E293B",
-                    color: "#fff",
-                    borderRadius: "8px",
-                    border: "none",
-                  }}
-                  itemStyle={{ color: "#fff" }}
-                  cursor={{ fill: "#F1F5F9" }}
-                />
-                <Bar
-                  dataKey="count"
-                  fill="#2563EB"
-                  radius={[4, 4, 0, 0]}
-                  barSize={40}
-                  name="Rooms Created"
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Integration Guide */}
-        <div className="bg-slate-900 rounded-xl p-6 text-slate-300 flex flex-col">
-          <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-            <ExternalLink size={18} /> Integration Guide
-          </h3>
-          <p className="mb-4 text-sm text-slate-400">
-            Copy this code snippet into your Android Application class or
-            MainActivity to initialize the SDK.
-          </p>
-          <div className="flex-1 bg-slate-800 rounded-lg p-4 font-mono text-xs overflow-auto">
-            <pre>{`// In MainActivity.kt
-
-override fun onCreate() {
-    super.onCreate()
-    
-    // Initialize with your API Key
-    CollabSession.initialize(
-        "${app.apiKey}"
-    )
-}`}</pre>
-          </div>
-        </div>
+        <AnalyticsChart chartData={chartData} />
+        <IntegrationGuide apiKey={app.apiKey} />
       </div>
 
-      {/* Active Rooms Section */}
-      <div>
-        <h2 className="text-xl font-bold text-secondary mb-4 flex items-center gap-2">
-          <Box size={24} className="text-primary" /> Active Rooms (
-          {rooms.length})
-        </h2>
-
-        {rooms.length === 0 ? (
-          <div className="bg-white rounded-lg p-8 text-center border border-gray-200 text-gray-500">
-            No active rooms found. Start your game to see rooms here.
-          </div>
-        ) : (
-          <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-slate-50 border-b">
-                  <tr>
-                    <th className="p-4 font-semibold text-gray-600 text-sm">
-                      Room ID
-                    </th>
-                    <th className="p-4 font-semibold text-gray-600 text-sm">
-                      Created
-                    </th>
-                    <th className="p-4 font-semibold text-gray-600 text-sm">
-                      Last Update
-                    </th>
-                    <th className="p-4 font-semibold text-gray-600 text-sm text-right">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {rooms.map((room) => (
-                    <tr
-                      key={room._id}
-                      className="hover:bg-slate-50/50 transition-colors"
-                    >
-                      <td className="p-4 font-mono font-medium text-primary">
-                        {room.roomId}
-                      </td>
-                      <td className="p-4 text-sm text-gray-600">
-                        {new Date(room.createdAt).toLocaleString()}
-                      </td>
-                      <td className="p-4 text-sm text-gray-600">
-                        {new Date(room.lastUpdated).toLocaleString()}
-                      </td>
-                      <td className="p-4 text-right">
-                        <button
-                          onClick={() => deleteRoom(room.roomId)}
-                          className="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
-                          title="Close Room"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-      </div>
+      <RoomList rooms={rooms} onDeleteRoom={handleDeleteRoom} />
     </div>
   );
 }
