@@ -24,55 +24,69 @@ The project is divided into three main components. Below is the detailed structu
 
 The core engine handling API requests, database interactions, and WebSocket connections.
 
+```text
 backend/
-├── controllers/ # Business logic for API endpoints
-│ ├── appController.js
-│ ├── authController.js
-│ └── roomController.js
-├── middleware/ # Authentication & validation middleware
-│ └── authMiddleware.js
-├── models/ # MongoDB Mongoose schemas
-│ ├── App.js
-│ ├── Developer.js
-│ └── Room.js
-├── routes/ # API route definitions
-│ ├── appRoutes.js
-│ ├── authRoutes.js
-│ └── roomRoutes.js
-├── sockets/ # Real-time event handlers
-│ └── socketHandler.js
-└── server.js # Entry point & server configuration### 2. Administration Portal (`frontend-portal/`)
+├── controllers/      # Business logic for API endpoints
+│   ├── appController.js
+│   ├── authController.js
+│   └── roomController.js
+├── middleware/       # Authentication & validation middleware
+│   └── authMiddleware.js
+├── models/           # MongoDB Mongoose schemas
+│   ├── App.js
+│   ├── Developer.js
+│   └── Room.js
+├── routes/           # API route definitions
+│   ├── appRoutes.js
+│   ├── authRoutes.js
+│   └── roomRoutes.js
+├── sockets/          # Real-time event handlers
+│   └── socketHandler.js
+└── server.js         # Entry point & server configuration
+```
+
+### 2. Administration Portal (`frontend-portal/`)
+
 A React-based dashboard for developers to manage their applications and view analytics.
 
+```text
 frontend-portal/
 ├── public/
 ├── src/
-│ ├── components/ # Reusable UI components
-│ │ ├── AnalyticsChart.jsx
-│ │ ├── IntegrationGuide.jsx
-│ │ └── RoomList.jsx
-│ ├── context/ # Global state (Authentication)
-│ │ └── AuthContext.jsx
-│ ├── layouts/ # Page layouts (Sidebar, Header)
-│ │ └── DashboardLayout.jsx
-│ ├── pages/ # Main application views
-│ │ ├── Dashboard.jsx
-│ │ ├── Login.jsx
-│ │ └── AppDetails.jsx
-│ ├── App.jsx # Routing configuration
-│ └── main.jsx # React entry point
-└── tailwind.config.js### 3. Android Ecosystem (`android/`)
+│   ├── components/   # Reusable UI components
+│   │   ├── AnalyticsChart.jsx
+│   │   ├── IntegrationGuide.jsx
+│   │   └── RoomList.jsx
+│   ├── context/      # Global state (Authentication)
+│   │   └── AuthContext.jsx
+│   ├── layouts/      # Page layouts (Sidebar, Header)
+│   │   └── DashboardLayout.jsx
+│   ├── pages/        # Main application views
+│   │   ├── Dashboard.jsx
+│   │   ├── Login.jsx
+│   │   └── AppDetails.jsx
+│   ├── App.jsx       # Routing configuration
+│   └── main.jsx      # React entry point
+└── tailwind.config.js
+```
+
+### 3. Android Ecosystem (`android/`)
+
 Contains the SDK library and a sample application to demonstrate its usage.
 
+```text
 android/
-├── app/ # Example Application
-│ └── src/main/java/com/example/collabsessionapp/
-│ ├── MainActivity.kt
-│ └── ChatActivity.kt
-└── collab-sdk/ # The Core Library
-└── src/main/java/com/example/collab_sdk/
-├── CollabSessionSDK.kt
-└── SocketManager.kt---
+├── app/              # Example Application
+│   └── src/main/java/com/example/collabsessionapp/
+│       ├── MainActivity.kt
+│       └── ChatActivity.kt
+└── collab-sdk/       # The Core Library
+    └── src/main/java/com/example/collab_sdk/
+        ├── CollabSessionSDK.kt
+        └── SocketManager.kt
+```
+
+---
 
 ## 📸 Screenshots & Gallery
 
@@ -117,15 +131,24 @@ _Above: The Example App running on an emulator, demonstrating real-time messagin
 ### Quick Setup
 
 **1. Backend**
+
+```bash
 cd backend
 npm install
-
 # Create a .env file with MONGO_URI
+npm start
+```
 
-npm start**2. Frontend Portal**
+**2. Frontend Portal**
+
+```bash
 cd frontend-portal
 npm install
-npm run dev**3. Android**
+npm run dev
+```
+
+**3. Android**
+
 Open the `android` folder in Android Studio and run the `app` module.
 
 ---
