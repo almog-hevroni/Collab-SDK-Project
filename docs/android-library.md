@@ -4,10 +4,29 @@ A Kotlin library for integrating real-time features.
 
 ## Installation
 
-Add the library to your `build.gradle.kts` dependencies (once published):
+### Step 1. Add the JitPack repository
+
+Add this to your `settings.gradle.kts` file:
 
 ```kotlin
-implementation("com.example.collab:collab-sdk:1.0.0")
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+```
+
+### Step 2. Add the dependency
+
+Add the library to your app's `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation("com.github.almog-hevroni:Collab-SDK-Project:v1.0.1")
+}
 ```
 
 ## Usage
