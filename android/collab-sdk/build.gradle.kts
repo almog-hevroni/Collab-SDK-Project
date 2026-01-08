@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id("maven-publish")
 }
 
 android {
@@ -30,6 +31,26 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+}
+
+// FIX: Use configure<PublishingExtension> to avoid resolution errors
+afterEvaluate {
+    configure<PublishingExtension> {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.almog-hevroni"
+                artifactId = "collab-sdk"
+                version = "1.0.0"
+            }
+        }
+    }
 }
 
 dependencies {
@@ -41,16 +62,16 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // --- תקשורת רשת (Retrofit) ---
+    // --- Network (Retrofit) ---
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    // --- זמן אמת (Socket.io) ---
+    // --- Real-Time (Socket.io) ---
     implementation("io.socket:socket.io-client:2.1.0") {
-        exclude(group = "org.json", module = "json") // מונע התנגשויות
+        exclude(group = "org.json", module = "json") // Prevent conflicts
     }
 
-    // --- ריבוי משימות (Coroutines) ---
+    // --- Coroutines ---
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }
