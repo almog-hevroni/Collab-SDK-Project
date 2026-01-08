@@ -6,7 +6,8 @@ export const AuthContext = createContext();
 
 // Create an axios instance with default config
 const api = axios.create({
-  baseURL: "http://localhost:3000/api", // Adjust if your backend port is different
+  // Use environment variable if available, otherwise fallback to localhost
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
 });
 
 export const AuthProvider = ({ children }) => {
