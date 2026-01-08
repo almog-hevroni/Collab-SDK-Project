@@ -1,0 +1,6 @@
+jdk: openjdk17
+before_install:
+  - cd android
+  - chmod +x gradlew
+install:
+  - ./gradlew :collab-sdk:publishReleasePublicationToMavenLocal
