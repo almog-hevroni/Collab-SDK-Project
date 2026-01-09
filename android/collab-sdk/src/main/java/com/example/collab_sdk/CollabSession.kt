@@ -8,7 +8,7 @@ import com.google.gson.Gson
 
 object CollabSession {
     // IMPORTANT: Ensure this IP matches your local backend server IP
-    private const val BASE_URL = "http://192.168.1.28:3000/"
+    private const val BASE_URL = "http://192.168.1.31:3000/"
 
     private val gson = Gson()
     private val networkClient = NetworkClient(BASE_URL)
