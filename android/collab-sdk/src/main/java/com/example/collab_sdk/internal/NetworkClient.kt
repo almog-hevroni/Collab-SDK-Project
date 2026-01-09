@@ -1,7 +1,5 @@
 package com.example.collab_sdk.internal
 
-import com.example.collab_sdk.models.AppRegisterRequest
-import com.example.collab_sdk.models.AppRegisterResponse
 import com.example.collab_sdk.models.CreateRoomResponse
 import com.example.collab_sdk.network.CollabApiService
 import retrofit2.Retrofit
@@ -17,15 +15,6 @@ internal class NetworkClient(baseUrl: String) {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         apiService = retrofit.create(CollabApiService::class.java)
-    }
-
-    suspend fun registerApp(appName: String, email: String): AppRegisterResponse? {
-        return try {
-            val response = apiService.registerApp(AppRegisterRequest(appName, email))
-            if (response.isSuccessful) response.body() else null
-        } catch (e: Exception) {
-            null
-        }
     }
 
     suspend fun createRoom(apiKey: String): CreateRoomResponse? {

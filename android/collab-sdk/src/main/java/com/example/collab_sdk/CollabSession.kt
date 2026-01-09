@@ -2,7 +2,6 @@ package com.example.collab_sdk
 
 import com.example.collab_sdk.internal.NetworkClient
 import com.example.collab_sdk.internal.SocketManager
-import com.example.collab_sdk.models.AppRegisterResponse
 import com.example.collab_sdk.models.CreateRoomResponse
 import com.google.gson.Gson
 
@@ -40,11 +39,6 @@ object CollabSession {
 
     // --- Networking Delegates ---
 
-    suspend fun registerApp(appName: String, email: String): AppRegisterResponse? {
-        if (!isInitialized) return null
-        return networkClient.registerApp(appName, email)
-    }
-
     suspend fun createRoom(): CreateRoomResponse? {
         if (!isInitialized || apiKey == null) return null
         return networkClient.createRoom(apiKey!!)
@@ -74,8 +68,6 @@ object CollabSession {
             socketManager.updateState(roomId, state)
         }
     }
-
-    fun isSocketConnected(): Boolean = isInitialized && socketManager.isConnected()
 
     fun leaveSession() {
         if (isInitialized) {
