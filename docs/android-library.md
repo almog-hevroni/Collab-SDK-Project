@@ -25,7 +25,7 @@ Add the library to your app's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.almog-hevroni:Collab-SDK-Project:v1.0.1")
+    implementation("com.github.almog-hevroni:Collab-SDK-Project:v1.0.2")
 }
 ```
 
@@ -35,29 +35,40 @@ dependencies {
 
 Initialize the SDK in your Application class or main Activity.
 
+**Note:** You must provide the base URL of your backend server.
+
 ```kotlin
-val sdk = CollabSessionSDK.getInstance()
-sdk.initialize(context, "YOUR_API_KEY")
+// Initialize with your API Key and Server URL
+CollabSession.initialize("YOUR_API_KEY", "http://your-server-ip:3000/")
 ```
 
 ### 2. Connect to a Session
 
 ```kotlin
-sdk.joinSession("room_id_123") { success, message ->
-    if (success) {
-        println("Connected!")
-    }
-}
+CollabSession.joinRoom("room_id_123")
 ```
 
-### 3. Send & Receive Messages
+### 3. Send & Receive Events
+
+To receive events, implement the `CollabListener` interface:
 
 ```kotlin
-// Send
-sdk.sendMessage("Hello World")
+val listener = object : CollabSession.CollabListener {
+    override fun onEventReceived(data: Map<String, Any>) {
+        println("New event: $data")
+    }
 
-// Listen
-sdk.onMessageReceived = { message ->
-    println("New message: $message")
+    override fun onStateLoaded(state: Any) {
+        println("State loaded: $state")
+    }
 }
+
+CollabSession.setListener(listener)
+```
+
+To send an event:
+
+```kotlin
+val eventData = mapOf("message" to "Hello World")
+CollabSession.sendEvent("room_id_123", eventData)
 ```
