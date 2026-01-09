@@ -13,8 +13,6 @@ export default function DashboardLayout() {
       path: "/dashboard",
       icon: <LayoutDashboard size={20} />,
     },
-    // Future: { name: "Analytics", path: "/analytics", icon: <BarChart size={20} /> },
-    // Future: { name: "Billing", path: "/billing", icon: <CreditCard size={20} /> },
   ];
 
   return (
