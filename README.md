@@ -16,6 +16,18 @@ CollabSession SDK provides a complete solution for adding real-time features to 
 
 ---
 
+## 🎯 Target Audience & Use Cases
+
+This SDK is designed for developers building **multi-user applications** that require seamless **real-time synchronization**.
+
+**Ideal for:**
+
+- **Multiplayer Games:** Synchronize game state (e.g., board games like Tic-Tac-Toe, chess) between players instantly.
+- **Collaborative Tools:** Shared whiteboards, document editing, or team task management.
+- **Live Interactive Apps:** Real-time polling, quizzes, or auctions where instant updates are critical.
+
+---
+
 ## 📂 Project Structure
 
 ## 🏗️ System Architecture
@@ -84,7 +96,7 @@ android/
 ├── app/              # Example Application
 │   └── src/main/java/com/example/collabsessionapp/
 │       ├── MainActivity.kt
-│       └── ChatActivity.kt
+│       └── GameViewModel.kt
 └── collab-sdk/       # The Core Library
     └── src/main/java/com/example/collab_sdk/
         ├── CollabSessionSDK.kt
@@ -107,10 +119,10 @@ _Above: Detailed view of a specific application with integration keys._
 
 ### Android Integration
 
-Seamlessly integrate chat and collaboration features into your mobile app.
+Seamlessly integrate real-time game state synchronization into your mobile app.
 
-![Android Chat](docs/screenshots/android-chat.png)
-_Above: The Example App running on an emulator, demonstrating real-time messaging._
+![Android App](docs/screenshots/android-demo.png)
+_Above: The Example App running on a device or emulator, demonstrating a multiplayer Tic-Tac-Toe game._
 
 ---
 
