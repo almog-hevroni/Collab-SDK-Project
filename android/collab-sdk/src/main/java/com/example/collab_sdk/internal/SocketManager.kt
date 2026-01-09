@@ -99,4 +99,9 @@ internal class SocketManager(private val baseUrl: String, private val gson: Gson
     fun setListener(listener: CollabSession.CollabListener) {
         this.listener = listener
     }
+
+    fun disconnect() {
+        socket?.disconnect()
+        socket = null
+    }
 }

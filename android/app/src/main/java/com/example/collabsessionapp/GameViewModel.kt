@@ -39,7 +39,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application), C
 
     // --- Internal State ---
     private var currentRoomId: String? = null
-    private var mySymbol = "X"
+    private var mySymbol = ""
     private var currentTurn = "X"
     private var isGameActive = true
 
@@ -60,7 +60,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application), C
     // --- User Actions ---
 
     fun createSession() {
-        mySymbol = "X"
+        mySymbol = ""
         connectAndSetup(isNewRoom = true)
     }
 
@@ -69,7 +69,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application), C
             sendToast("Please enter a Room ID")
             return
         }
-        mySymbol = "O"
+        mySymbol = ""
         connectAndSetup(isNewRoom = false, roomIdInput = inputRoomId)
     }
 
@@ -82,6 +82,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application), C
         val currentBoard = _boardState.value ?: return
         if (currentBoard[index].isNotEmpty()) return
 
+        if (mySymbol.isEmpty()) {
+            sendToast("Waiting for role assignment...")
+            return
+        }
+
         if (mySymbol != currentTurn) {
             sendToast("Wait for opponent's turn!")
             return
@@ -93,11 +98,25 @@ class GameViewModel(application: Application) : AndroidViewModel(application), C
         // 2. Network Update
         currentRoomId?.let { roomId ->
             repository.sendMove(roomId, index, mySymbol)
-            repository.updateGameState(roomId, currentBoard.toList())
+            
+            // Determine Game Status
+            var status = "PLAYING"
+            var winner = ""
+            
+            if (checkWinner(currentBoard, mySymbol)) {
+                 status = "GAME_OVER"
+                 winner = mySymbol
+            } else if (currentBoard.none { it.isEmpty() }) {
+                 status = "GAME_OVER"
+                 winner = "DRAW"
+            }
+
+            repository.updateGameState(roomId, currentBoard.toList(), status, winner)
         }
     }
 
     fun exitGame() {
+        repository.leaveSession()
         currentRoomId = null
         isGameActive = true
         resetBoardLocally()
@@ -201,6 +220,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application), C
 
     private fun updateStatusText() {
         if (!isGameActive) return
+        if (mySymbol.isEmpty()) {
+            _statusText.postValue("Connecting to Server...")
+            return
+        }
         val turnMsg = if (mySymbol == currentTurn) "YOUR TURN" else "Waiting for $currentTurn..."
         _statusText.postValue("You are $mySymbol | $turnMsg")
     }
@@ -237,6 +260,32 @@ class GameViewModel(application: Application) : AndroidViewModel(application), C
     override fun onEventReceived(data: Map<String, Any>) {
         try {
             val type = data["type"] as? String
+
+            // --- Generic SDK Event: SESSION_INFO ---
+            if (type == "SESSION_INFO") {
+                val index = (data["participantIndex"] as? Number)?.toInt()
+                if (index == 0) {
+                    mySymbol = "X"
+                    sendToast("You are Player X")
+                } else if (index == 1) {
+                    mySymbol = "O"
+                    sendToast("You are Player O")
+                } else {
+                    sendToast("Observer Mode") // Optional: Generic observer handling
+                }
+                updateStatusText()
+                return
+            }
+
+            // --- Generic SDK Event: ERROR ---
+            if (type == "ERROR") {
+                val msg = data["message"] as? String
+                sendToast(msg ?: "Error")
+                exitGame() // Kick user out if room is full
+                return
+            }
+
+            // --- App Specific Event: MAKE_MOVE ---
             if (type == "MAKE_MOVE") {
                 val index = (data["index"] as? Number)?.toInt() ?: return
                 val symbol = data["symbol"] as? String ?: return

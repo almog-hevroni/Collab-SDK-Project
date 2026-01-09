@@ -76,4 +76,10 @@ object CollabSession {
     }
 
     fun isSocketConnected(): Boolean = isInitialized && socketManager.isConnected()
+
+    fun leaveSession() {
+        if (isInitialized) {
+            socketManager.disconnect()
+        }
+    }
 }

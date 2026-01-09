@@ -61,8 +61,12 @@ class GameRepository(private val context: Context) {
         CollabSession.sendEvent(roomId, moveData)
     }
 
-    fun updateGameState(roomId: String, board: List<String>) {
-        val stateToSave = mapOf("board" to board)
+    fun updateGameState(roomId: String, board: List<String>, status: String = "PLAYING", winner: String = "") {
+        val stateToSave = mapOf(
+            "board" to board,
+            "status" to status,
+            "winner" to winner
+        )
         CollabSession.updateState(roomId, stateToSave)
     }
 
@@ -70,5 +74,9 @@ class GameRepository(private val context: Context) {
     // but passing the listener through is acceptable for this callback-based SDK.
     fun setCollabListener(listener: CollabSession.CollabListener) {
         CollabSession.setListener(listener)
+    }
+
+    fun leaveSession() {
+        CollabSession.leaveSession()
     }
 }
