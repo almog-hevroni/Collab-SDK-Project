@@ -29,7 +29,7 @@ The app initializes the SDK with a hardcoded API Key (for demonstration purposes
 ```kotlin
 // GameRepository.kt
 val apiKey = "YOUR_API_KEY"
-val serverUrl = "http://YOUR_SERVER_IP:3000/" // note trailing slash
+val serverUrl = "http://YOUR_SERVER_IP:3000/"
 CollabSession.initialize(apiKey, serverUrl)
 ```
 
