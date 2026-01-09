@@ -47,7 +47,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "com.github.almog-hevroni"
                 artifactId = "collab-sdk"
-                version = "1.1.1"
+                version = "v1.1.1"
             }
         }
     }

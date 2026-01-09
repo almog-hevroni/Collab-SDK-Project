@@ -25,7 +25,7 @@ Add the library to your app's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.almog-hevroni:Collab-SDK-Project:v1.0.2")
+    implementation("com.github.almog-hevroni:Collab-SDK-Project:v1.1.1")
 }
 ```
 

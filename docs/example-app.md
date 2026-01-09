@@ -15,6 +15,7 @@ The app allows two players to join the same "Room" and play against each other i
   - **Turn Management:** The app enforces turn rules (Player X vs. Player O).
   - **Win Detection:** Automatically detects winning lines or draws.
 - **State Persistence:** If a player disconnects and reconnects, the current board state is reloaded from the server.
+- **Game Status Tracking:** The app now explicitly saves the "Game Over" status and winner to the server, allowing the web portal to display historical results.
 - **Clean Disconnects:** Properly handles users leaving the room so they can rejoin or be replaced.
 
 ## 🛠️ Implementation Highlights
@@ -28,7 +29,8 @@ The app initializes the SDK with a hardcoded API Key (for demonstration purposes
 ```kotlin
 // GameRepository.kt
 val apiKey = "YOUR_API_KEY"
-CollabSession.initialize(apiKey)
+val serverUrl = "http://YOUR_SERVER_IP:3000/" // note trailing slash
+CollabSession.initialize(apiKey, serverUrl)
 ```
 
 ### 2. Role Assignment (SESSION_INFO)
