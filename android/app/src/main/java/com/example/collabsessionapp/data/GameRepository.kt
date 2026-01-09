@@ -18,8 +18,12 @@ class GameRepository(private val context: Context) {
                 // Hardcoded API Key from Developer Portal
                 // In a real production app, this should be in BuildConfig or secure storage
                 val apiKey = "093912e3-312c-4c18-8949-7a3878ec4f19"
+                
+                // TODO: Replace with your computer's local IP address if running on a physical device.
+                // Keep the port :3000 if that's what your backend uses.
+                val serverUrl = "http://192.168.1.31:3000/"
 
-                CollabSession.initialize(apiKey)
+                CollabSession.initialize(apiKey, serverUrl)
                 Result.success(Unit)
             } catch (e: Exception) {
                 Result.failure(e)

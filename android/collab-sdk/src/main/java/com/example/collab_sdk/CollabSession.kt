@@ -7,60 +7,73 @@ import com.example.collab_sdk.models.CreateRoomResponse
 import com.google.gson.Gson
 
 object CollabSession {
-    // IMPORTANT: Ensure this IP matches your local backend server IP
-    private const val BASE_URL = "http://192.168.1.31:3000/"
-
+    
     private val gson = Gson()
-    private val networkClient = NetworkClient(BASE_URL)
-    private val socketManager = SocketManager(BASE_URL, gson)
+    private lateinit var networkClient: NetworkClient
+    private lateinit var socketManager: SocketManager
 
     private var apiKey: String? = null
     private var listener: CollabListener? = null
+    private var isInitialized = false
 
     interface CollabListener {
         fun onEventReceived(data: Map<String, Any>)
         fun onStateLoaded(state: Any)
     }
 
-    fun initialize(apiKey: String) {
+    fun initialize(apiKey: String, serverUrl: String) {
         this.apiKey = apiKey
+        this.networkClient = NetworkClient(serverUrl)
+        this.socketManager = SocketManager(serverUrl, gson)
+        this.isInitialized = true
+        
+        // If listener was set before initialization, re-set it to the new socketManager
+        listener?.let { socketManager.setListener(it) }
     }
 
     fun setListener(collabListener: CollabListener) {
         this.listener = collabListener
-        // Pass listener to socket manager so it can dispatch events
-        socketManager.setListener(collabListener)
+        if (isInitialized) {
+            socketManager.setListener(collabListener)
+        }
     }
 
     // --- Networking Delegates ---
 
     suspend fun registerApp(appName: String, email: String): AppRegisterResponse? {
+        if (!isInitialized) return null
         return networkClient.registerApp(appName, email)
     }
 
     suspend fun createRoom(): CreateRoomResponse? {
-        if (apiKey == null) return null
+        if (!isInitialized || apiKey == null) return null
         return networkClient.createRoom(apiKey!!)
     }
 
     suspend fun checkRoom(roomId: String): Boolean {
-        if (apiKey == null) return false
+        if (!isInitialized || apiKey == null) return false
         return networkClient.checkRoom(apiKey!!, roomId)
     }
 
     // --- Socket Delegates ---
 
     fun joinRoom(roomId: String) {
-        socketManager.connect(roomId, listener)
+        if (isInitialized) {
+            socketManager.connect(roomId, listener)
+        }
     }
 
     fun sendEvent(roomId: String, eventData: Map<String, Any>) {
-        socketManager.sendEvent(roomId, eventData)
+        if (isInitialized) {
+            socketManager.sendEvent(roomId, eventData)
+        }
     }
 
     fun updateState(roomId: String, state: Any) {
-        socketManager.updateState(roomId, state)
+        if (isInitialized) {
+            socketManager.updateState(roomId, state)
+        }
     }
 
-    fun isSocketConnected(): Boolean = socketManager.isConnected()
+    fun isSocketConnected(): Boolean = isInitialized && socketManager.isConnected()
 }
