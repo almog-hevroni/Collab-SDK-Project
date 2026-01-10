@@ -39,7 +39,7 @@ Initialize the SDK in your Application class or main Activity.
 
 ```kotlin
 // Initialize with your API Key and Server URL
-CollabSession.initialize("YOUR_API_KEY", "http://your-server-ip:3000/")
+CollabSession.initialize("YOUR_API_KEY", "https://collab-sdk-project.onrender.com/")
 ```
 
 ### 2. Connect to a Session

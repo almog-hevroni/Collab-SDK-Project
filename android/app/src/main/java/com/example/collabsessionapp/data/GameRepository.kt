@@ -15,9 +15,8 @@ class GameRepository(private val context: Context) {
                 // Hardcoded API Key from Developer Portal
                 val apiKey = "093912e3-312c-4c18-8949-7a3878ec4f19"
                 
-                // TODO: Replace with your computer's local IP address if running on a physical device.
-                // Keep the port :3000 if that's what your backend uses.
-                val serverUrl = "http://192.168.1.31:3000/"
+                // Cloud URL
+                val serverUrl = "https://collab-sdk-project.onrender.com/"
 
                 CollabSession.initialize(apiKey, serverUrl)
                 Result.success(Unit)

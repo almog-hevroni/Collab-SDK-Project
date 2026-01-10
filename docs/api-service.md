@@ -4,8 +4,8 @@ The backend service handles authentication, application management, room managem
 
 ## Base URLs
 
-- REST API (local): `http://localhost:3000/api`
-- Socket.io (local): `http://localhost:3000`
+- REST API (cloud): `https://collab-sdk-project.onrender.com/api`
+- Socket.io (cloud): `https://collab-sdk-project.onrender.com`
 
 ## Authentication (Developer / Portal)
 
