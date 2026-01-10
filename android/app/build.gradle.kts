@@ -49,7 +49,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
 
-    implementation("com.github.almog-hevroni:Collab-SDK-Project:v1.1.2")
+    implementation("com.github.almog-hevroni:Collab-SDK-Project:v1.1.3")
     //implementation(project(":collab-sdk"))
 
 }

@@ -96,6 +96,18 @@ _Above: The Example App running on a device or emulator, demonstrating a multipl
 
 ---
 
+## 🌐 Live Demo
+
+You can interact with the live deployed version of the system without any local setup:
+
+- **Administration Portal:** [Launch Dashboard](https://collab-sdk-project-1.onrender.com)
+- **Backend API:** `https://collab-sdk-project.onrender.com`
+- **Socket.io Server:** `https://collab-sdk-project.onrender.com`
+
+> **Note:** The backend is hosted on Render's free tier. If the service has been inactive, please allow up to 60 seconds for the server to wake up on the first request.
+
+---
+
 ## 📚 Documentation
 
 For detailed integration guides, please refer to the following:
@@ -109,4 +121,3 @@ For detailed integration guides, please refer to the following:
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
-

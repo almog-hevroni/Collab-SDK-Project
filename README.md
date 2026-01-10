@@ -133,11 +133,23 @@ _Above: The Example App running on a device or emulator, demonstrating a multipl
 | **Backend**  | Node.js, Express, Socket.io, MongoDB, Mongoose |
 | **Frontend** | React, Vite, TailwindCSS, Recharts, Axios      |
 | **Android**  | Kotlin, Coroutines, Retrofit, Socket.io Client |
-| **DevOps**   | Render (Cloud), Vercel (Portal)                |
+| **DevOps**   | Render (Cloud)                                 |
 
 ---
 
-## 🏁 Getting Started
+## 🌐 Live Demo
+
+You can interact with the live deployed version of the system without any local setup:
+
+- **Administration Portal:** [Launch Dashboard](https://collab-sdk-project-1.onrender.com)
+- **Backend API:** `https://collab-sdk-project.onrender.com`
+- **Socket.io Server:** `https://collab-sdk-project.onrender.com`
+
+> **Note:** The backend is hosted on Render's free tier. If the service has been inactive, please allow up to 60 seconds for the server to wake up on the first request.
+
+---
+
+## 🏁 Getting Started (Local Run)
 
 ### Prerequisites
 
@@ -172,11 +184,13 @@ Open the `android` folder in Android Studio and run the `app` module.
 
 ## 📚 Documentation
 
-For detailed integration guides, please refer to the `docs/` folder:
+Detailed documentation is available on our **[Project Website](https://almog-hevroni.github.io/Collab-SDK-Project/)**.
 
-- [📖 API Service Documentation](docs/api-service.md)
-- [📱 Android Library Integration](docs/android-library.md)
-- [💡 Example App Walkthrough](docs/example-app.md)
+Or browse the guides directly here:
+
+- [📖 API Service Documentation](docs/api-service.md) ([View on Web](https://almog-hevroni.github.io/Collab-SDK-Project/api-service))
+- [📱 Android Library Integration](docs/android-library.md) ([View on Web](https://almog-hevroni.github.io/Collab-SDK-Project/android-library))
+- [💡 Example App Walkthrough](docs/example-app.md) ([View on Web](https://almog-hevroni.github.io/Collab-SDK-Project/example-app))
 
 ---
 
