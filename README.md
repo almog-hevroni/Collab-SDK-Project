@@ -1,8 +1,7 @@
-<p align="center">
-  <img src="frontend-portal/public/collabsdk-logo1.png" alt="CollabSession SDK Logo" width="200">
-</p>
-
-# CollabSession SDK
+<h1>
+  <img src="frontend-portal/public/collabsdk-logo1.png" alt="CollabSession SDK Logo" width="50" style="vertical-align: middle;">
+  CollabSession SDK
+</h1>
 
 **A comprehensive real-time collaboration ecosystem.**
 
