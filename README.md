@@ -12,7 +12,7 @@ CollabSession SDK provides a complete solution for adding real-time features to 
 
 ## 🎬 Demo Video
 
-https://github.com/almog-hevroni/Collab-SDK-Project/raw/main/docs/SDK%20video.mp4
+https://github.com/user-attachments/assets/7f56ae98-3839-4cca-b55d-7a340ac5ae6f
 
 ---
 
