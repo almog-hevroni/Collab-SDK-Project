@@ -127,8 +127,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application), C
     // --- Internal Logic ---
 
     private fun connectAndSetup(isNewRoom: Boolean, roomIdInput: String? = null) {
-        sendToast("Connecting...")
-
         viewModelScope.launch {
             // 1. Initialize SDK
             val initResult = repository.initializeSdk()
@@ -250,7 +248,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application), C
                     recalculateTurn(newBoard)
                     updateStatusText()
                 }
-                sendToast("Game State Loaded")
             }
         } catch (e: Exception) {
             Log.e("GameVM", "Error parsing state: ${e.message}")
@@ -266,10 +263,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application), C
                 val index = (data["participantIndex"] as? Number)?.toInt()
                 if (index == 0) {
                     mySymbol = "X"
-                    sendToast("You are Player X")
                 } else if (index == 1) {
                     mySymbol = "O"
-                    sendToast("You are Player O")
                 } else {
                     sendToast("Observer Mode") // Optional: Generic observer handling
                 }

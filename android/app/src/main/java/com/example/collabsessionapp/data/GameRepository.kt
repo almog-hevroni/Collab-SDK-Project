@@ -13,7 +13,7 @@ class GameRepository(private val context: Context) {
         return withContext(Dispatchers.IO) {
             try {
                 // Hardcoded API Key from Developer Portal
-                val apiKey = "093912e3-312c-4c18-8949-7a3878ec4f19"
+                val apiKey = "4b68d7a1-88db-4255-ae38-fd96251f6d88"
                 
                 // Cloud URL
                 val serverUrl = "https://collab-sdk-project.onrender.com/"
