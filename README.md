@@ -10,6 +10,12 @@ CollabSession SDK provides a complete solution for adding real-time features to 
 
 ---
 
+## 🎬 Demo Video
+
+https://github.com/almog-hevroni/Collab-SDK-Project/raw/main/docs/SDK%20video.mp4
+
+---
+
 ## 🚀 Key Features
 
 - **Real-Time Synchronization:** Powered by Socket.io for instant data transfer.
