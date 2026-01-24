@@ -49,44 +49,11 @@ This backend powers the CollabSession ecosystem:
 | Rooms (Portal) | GET | `/rooms/app/:appId` | JWT | — | `{ success, count, data }` |
 | Rooms (Portal) | DELETE | `/rooms/:roomId` | JWT | — | `{ success, message }` |
 
-### Copy/paste examples
-
-#### 1) Register (Developer)
-
-```bash
-curl -X POST "https://collab-sdk-project.onrender.com/api/auth/register" -H "Content-Type: application/json" -d "{\"name\":\"Your Name\",\"email\":\"you@example.com\",\"password\":\"your-password\"}"
-```
-
-#### 2) Login (Developer) → get JWT
-
-```bash
-curl -X POST "https://collab-sdk-project.onrender.com/api/auth/login" -H "Content-Type: application/json" -d "{\"email\":\"you@example.com\",\"password\":\"your-password\"}"
-```
-
-#### 3) Register an App → get API Key (JWT required)
-
-```bash
-curl -X POST "https://collab-sdk-project.onrender.com/api/apps/register" -H "Content-Type: application/json" -H "Authorization: Bearer <JWT>" -d "{\"name\":\"My App Name\"}"
-```
-
-#### 4) Create a Room (API Key required)
-
-```bash
-curl -X POST "https://collab-sdk-project.onrender.com/api/rooms/create" -H "x-api-key: <APP_API_KEY>"
-```
-
-#### 5) Check if a Room exists (API Key required)
-
-```bash
-curl -X GET "https://collab-sdk-project.onrender.com/api/rooms/ABCDE" -H "x-api-key: <APP_API_KEY>"
-```
-
 ## WebSockets (Socket.io)
 
 ### Connect
 
 - **Socket base**: use the Socket.io base URL (no `/api`), e.g. `https://collab-sdk-project.onrender.com`
-- **Room capacity**: max **2** participants per room (server assigns index `0` then `1`)
 
 ### Events (tables)
 
@@ -107,25 +74,6 @@ curl -X GET "https://collab-sdk-project.onrender.com/api/rooms/ABCDE" -H "x-api-
 | `initial_state` | `any` | If the room has saved state in MongoDB |
 | `user_joined` | `{ userId: string }` | When another socket joins the same room |
 
-### Minimal client flow (pseudo)
-
-```js
-socket.emit("join_room", roomId);
-
-socket.on("collab_event", (payload) => {
-  // payload.type === "SESSION_INFO" / "ERROR" / app-specific events
-});
-
-socket.on("initial_state", (roomState) => {
-  // hydrate local UI/game state from server
-});
-
-// send an app event to the other participant(s)
-socket.emit("collab_event", { roomId, payload: { type: "MAKE_MOVE", index: 4 } });
-
-// persist authoritative state (server stores it)
-socket.emit("update_state", { roomId, roomState: /* any JSON-serializable structure */ {} });
-```
 
 ## Common errors
 
